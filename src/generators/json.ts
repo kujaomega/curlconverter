@@ -3,6 +3,7 @@ import type { Request, Warnings } from "../parse.js";
 import type { AuthType } from "../Request.js";
 import { parseQueryString } from "../Query.js";
 
+const generatorName = "json";
 const supportedArgs = new Set([
   ...COMMON_SUPPORTED_ARGS,
 
@@ -71,34 +72,21 @@ function getDataString(
     return {};
   }
 
+  if (request.data.toString() === "") {
+    return request.data.toString();
+  }
+
   const contentType = request.headers.getContentType();
+  if (contentType === "text/plain") {
+    try {
+      return request.data.toString();
+    } catch (e) {}
+  }
   if (contentType === "application/json") {
     try {
       return JSON.parse(request.data.toString());
     } catch (e) {}
   }
-
-  if (contentType === "application/x-www-form-urlencoded") {
-    const [parsedQuery, parsedQueryDict] = parseQueryString(request.data);
-    if (parsedQueryDict) {
-      return Object.fromEntries(
-        parsedQueryDict.map((param) => [
-          param[0].toString(),
-          Array.isArray(param[1])
-            ? param[1].map((v) => v.toString())
-            : param[1].toString(),
-        ])
-      );
-    }
-    if (parsedQuery) {
-      // .fromEntries() means we lose data when there are repeated keys
-      return Object.fromEntries(
-        parsedQuery.map((param) => [param[0].toString(), param[1].toString()])
-      );
-    }
-  }
-
-  // TODO: this leads to ambiguity with JSON strings
   return request.data.toString();
 }
 

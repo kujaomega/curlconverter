@@ -9,7 +9,7 @@ import {
   stringify as jsonStringifyLossless,
   isLosslessNumber,
 } from "lossless-json";
-
+const generatorName = "julia";
 const supportedArgs = new Set([
   ...COMMON_SUPPORTED_ARGS,
   "max-time",
@@ -180,7 +180,7 @@ function formatData(request: Request, imports: Set<string>): [string, string] {
         return [result, "JSON.json(body)"];
       } catch {}
     } else if (contentType === "application/x-www-form-urlencoded") {
-      const [queryList] = parseQueryString(request.dataArray[0]);
+      const [queryList] = parseQueryString(request.dataArray[0], generatorName);
       if (queryList) {
         let code = "Dict(\n";
         for (const [k, v] of queryList) {
