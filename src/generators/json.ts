@@ -1,5 +1,5 @@
-import { parse, getFirst, COMMON_SUPPORTED_ARGS } from "../parse.js";
 import type { Request, Warnings } from "../parse.js";
+import { COMMON_SUPPORTED_ARGS, getFirst, parse } from "../parse.js";
 import type { AuthType } from "../Request.js";
 import { parseQueryString } from "../Query.js";
 
@@ -70,6 +70,9 @@ function getDataString(
 ): { [key: string]: string | string[] } | string {
   if (!request.data) {
     return {};
+  }
+  if (request.data.toString() === "") {
+    return { data: request.data.toString() };
   }
 
   if (request.data.toString() === "") {
@@ -223,6 +226,7 @@ export function _toJsonString(
     ) + "\n"
   );
 }
+
 export function toJsonStringWarn(
   curlCommand: string | string[],
   warnings: Warnings = []
@@ -231,6 +235,7 @@ export function toJsonStringWarn(
   const json = _toJsonString(requests, warnings);
   return [json, warnings];
 }
+
 export function toJsonString(curlCommand: string | string[]): string {
   return toJsonStringWarn(curlCommand)[0];
 }
