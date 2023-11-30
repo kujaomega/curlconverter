@@ -90,7 +90,42 @@ function getDataString(
       return JSON.parse(request.data.toString());
     } catch (e) {}
   }
+<<<<<<< HEAD
   return request.data.toString();
+=======
+
+  // const [parsedQuery, parsedQueryDict] = parseQueryString(
+  //   request.data,
+  //   generatorName
+  // );
+  return { data: request.data.toString() };
+  // if (!parsedQuery || !parsedQuery.length) {
+  //   // TODO: this is not a good API
+  //   return {
+  //     data: {
+  //       [request.data.toString()]: "",
+  //     },
+  //   };
+  // }
+  // if (parsedQueryDict) {
+  //   const data = Object.fromEntries(
+  //     parsedQueryDict.map((param) => [
+  //       param[0].toString(),
+  //       Array.isArray(param[1])
+  //         ? param[1].map((v) => v.toString())
+  //         : param[1].toString(),
+  //     ])
+  //   );
+  //   return {data};
+  // } else {
+  //   return {
+  //     // .fromEntries() means we lose data when there are repeated keys
+  //     data: Object.fromEntries(
+  //       parsedQuery.map((param) => [param[0].toString(), param[1].toString()])
+  //     ),
+  //   };
+  // }
+>>>>>>> 1a05659 (Add form url encoded raw data)
 }
 
 function getFilesString(
