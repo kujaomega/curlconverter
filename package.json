@@ -61,6 +61,8 @@
     "start": "tsc -watch -p ./",
     "pretest": "TSC_COMPILE_ON_ERROR=true npm run compile || exit 0",
     "test": "NODE_OPTIONS=\"--enable-source-maps --unhandled-rejections=strict\" npx tape dist/test/test.js",
+    "test1": "NODE_OPTIONS=\"--enable-source-maps --unhandled-rejections=strict\" npx tape --language=json  --test=netflix1 dist/test/test.js",
+    "test2": "NODE_OPTIONS=\"--enable-source-maps --unhandled-rejections=strict --inspect-brk\" node --inspect dist/test/test.js --language=json  --test=netflix1 dist/test/test.js",
     "coverage": "c8 --check-coverage npm run test",
     "prelint": "npm run compile",
     "lint": "eslint src --ext ts",
