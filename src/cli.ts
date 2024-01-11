@@ -44,7 +44,9 @@ import {
   toJavaScriptXHRWarn,
 } from "./generators/javascript/xhr.js";
 import { _toJsonString, toJsonStringWarn } from "./generators/json.js";
+import { _toJulia, toJuliaWarn } from "./generators/julia.js";
 import { _toKotlin, toKotlinWarn } from "./generators/kotlin.js";
+import { _toLua, toLuaWarn } from "./generators/lua.js";
 import { _toMATLAB, toMATLABWarn } from "./generators/matlab/matlab.js";
 import { _toNode, toNodeWarn } from "./generators/javascript/javascript.js";
 import {
@@ -64,6 +66,7 @@ import {
 } from "./generators/javascript/superagent.js";
 import { _toOCaml, toOCamlWarn } from "./generators/ocaml.js";
 import { _toObjectiveC, toObjectiveCWarn } from "./generators/objectivec.js";
+import { _toPerl, toPerlWarn } from "./generators/perl.js";
 import { _toPhp, toPhpWarn } from "./generators/php/php.js";
 import { _toPhpGuzzle, toPhpGuzzleWarn } from "./generators/php/guzzle.js";
 import {
@@ -78,7 +81,8 @@ import {
   _toPowershellWebRequest,
   toPowershellWebRequestWarn,
 } from "./generators/powershell.js";
-import { _toPython, toPythonWarn } from "./generators/python.js";
+import { _toPython, toPythonWarn } from "./generators/python/python.js";
+import { _toPythonHttp, toPythonHttpWarn } from "./generators/python/http.js";
 import { _toR, toRWarn } from "./generators/r.js";
 import { _toRuby, toRubyWarn } from "./generators/ruby.js";
 import { _toRust, toRustWarn } from "./generators/rust.js";
@@ -88,7 +92,7 @@ import { _toWget, toWgetWarn } from "./generators/wget.js";
 import fs from "fs";
 
 // This line is updated by extract_curl_args.py
-const VERSION = "4.8.0 (curl 8.2.0)";
+const VERSION = "4.9.0 (curl 8.2.1)";
 
 // sets a default in case --language isn't passed
 const defaultLanguage = "python";
@@ -131,7 +135,9 @@ const translate: {
   "javascript-superagent": [_toNodeSuperAgent, toNodeSuperAgentWarn], // undocumented alias
   "javascript-xhr": [_toJavaScriptXHR, toJavaScriptXHRWarn],
   json: [_toJsonString, toJsonStringWarn],
+  julia: [_toJulia, toJuliaWarn],
   kotlin: [_toKotlin, toKotlinWarn],
+  lua: [_toLua, toLuaWarn],
   matlab: [_toMATLAB, toMATLABWarn],
   node: [_toNode, toNodeWarn],
   "node-axios": [_toNodeAxios, toNodeAxiosWarn],
@@ -157,6 +163,7 @@ const translate: {
   objectivec: [_toObjectiveC, toObjectiveCWarn], // undocumented alias
   "objective-c": [_toObjectiveC, toObjectiveCWarn], // undocumented alias
   ocaml: [_toOCaml, toOCamlWarn],
+  perl: [_toPerl, toPerlWarn],
   php: [_toPhp, toPhpWarn],
   "php-curl": [_toPhp, toPhpWarn], // undocumented alias
   "php-guzzle": [_toPhpGuzzle, toPhpGuzzleWarn],
@@ -171,6 +178,8 @@ const translate: {
     toPowershellWebRequestWarn,
   ],
   python: [_toPython, toPythonWarn],
+  "python-http": [_toPythonHttp, toPythonHttpWarn],
+  "python-httpclient": [_toPythonHttp, toPythonHttpWarn], // undocumented alias
   r: [_toR, toRWarn],
   ruby: [_toRuby, toRubyWarn],
   rust: [_toRust, toRustWarn],
@@ -199,7 +208,9 @@ language: the language to convert the curl command to. The choices are
   javascript-jquery
   javascript-xhr
   json
+  julia
   kotlin
+  lua
   matlab
   node
   node-axios
@@ -210,6 +221,7 @@ language: the language to convert the curl command to. The choices are
   node-superagent
   objc
   ocaml
+  perl
   php
   php-guzzle
   php-requests

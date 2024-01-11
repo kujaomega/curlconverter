@@ -48,7 +48,6 @@ export function repr(w: Word): string {
   return args.join(" + ");
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reprJson(data: any, indent = 0): string {
   if (typeof data === "string") {
     return reprStr(data);
@@ -106,7 +105,7 @@ function formatData(request: Request, data: Word): [string, string] {
     for (const part of rest) {
       code +=
         "data.append(" +
-        repr(mergeWords(["&", part])) +
+        repr(mergeWords("&", part)) +
         ".data(using: .utf8)!)\n";
     }
     return [code, "request.httpBody = data as Data\n"];

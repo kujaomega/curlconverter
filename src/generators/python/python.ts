@@ -1,9 +1,10 @@
-import { CCError, has, UTF8encoder } from "../utils.js";
-import { Word, eq } from "../shell/Word.js";
-import { parse, COMMON_SUPPORTED_ARGS } from "../parse.js";
-import type { Request, Warnings } from "../parse.js";
-import { wordDecodeURIComponent, percentEncode } from "../Query.js";
-import { DataParam } from "../Request.js";
+import { CCError, has, UTF8encoder } from "../../utils.js";
+import { Word, eq } from "../../shell/Word.js";
+import { parse, COMMON_SUPPORTED_ARGS } from "../../parse.js";
+import type { Request, Warnings } from "../../parse.js";
+import { Headers } from "../../Headers.js";
+import { wordDecodeURIComponent, percentEncode } from "../../Query.js";
+import { DataParam } from "../../Request.js";
 
 import {
   parse as jsonParseLossless,
@@ -71,311 +72,6 @@ const supportedArgs = new Set([
   "proxy",
   "proxy-user",
 ]);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const unsupportedArgs = [
-  "dns-ipv4-addr",
-  "dns-ipv6-addr",
-  "random-file",
-  "egd-file",
-  "oauth2-bearer",
-  "connect-timeout",
-  "doh-url",
-  "ciphers",
-  "dns-interface",
-  "disable-epsv",
-  "no-disable-epsv",
-  "disallow-username-in-url",
-  "no-disallow-username-in-url",
-  "epsv",
-  "no-epsv",
-  "dns-servers",
-  "trace",
-  "npn",
-  "no-npn",
-  "trace-ascii",
-  "alpn",
-  "no-alpn",
-  "limit-rate",
-  "tr-encoding",
-  "no-tr-encoding",
-  "negotiate",
-  "no-negotiate",
-  "ntlm",
-  "no-ntlm",
-  "ntlm-wb",
-  "no-ntlm-wb",
-  "basic",
-  "no-basic",
-  "anyauth",
-  "no-anyauth",
-  "wdebug",
-  "no-wdebug",
-  "ftp-create-dirs",
-  "no-ftp-create-dirs",
-  "create-dirs",
-  "no-create-dirs",
-  "create-file-mode",
-  "max-redirs",
-  "proxy-ntlm",
-  "no-proxy-ntlm",
-  "crlf",
-  "no-crlf",
-  "stderr",
-  "aws-sigv4",
-  "interface",
-  "krb",
-  "krb4",
-  "haproxy-protocol",
-  "no-haproxy-protocol",
-  "max-filesize",
-  "disable-eprt",
-  "no-disable-eprt",
-  "eprt",
-  "no-eprt",
-  "xattr",
-  "no-xattr",
-  "ftp-ssl",
-  "no-ftp-ssl",
-  "ssl",
-  "no-ssl",
-  "ftp-pasv",
-  "no-ftp-pasv",
-  "socks5",
-  "tcp-nodelay",
-  "no-tcp-nodelay",
-  "proxy-digest",
-  "no-proxy-digest",
-  "proxy-basic",
-  "no-proxy-basic",
-  "retry",
-  "retry-connrefused",
-  "no-retry-connrefused",
-  "retry-delay",
-  "retry-max-time",
-  "proxy-negotiate",
-  "no-proxy-negotiate",
-  "form-escape",
-  "no-form-escape",
-  "ftp-account",
-  "proxy-anyauth",
-  "no-proxy-anyauth",
-  "trace-time",
-  "no-trace-time",
-  "ignore-content-length",
-  "no-ignore-content-length",
-  "ftp-skip-pasv-ip",
-  "no-ftp-skip-pasv-ip",
-  "ftp-method",
-  "local-port",
-  "socks4",
-  "socks4a",
-  "ftp-alternative-to-user",
-  "ftp-ssl-reqd",
-  "no-ftp-ssl-reqd",
-  "ssl-reqd",
-  "no-ssl-reqd",
-  "sessionid",
-  "no-sessionid",
-  "ftp-ssl-control",
-  "no-ftp-ssl-control",
-  "ftp-ssl-ccc",
-  "no-ftp-ssl-ccc",
-  "ftp-ssl-ccc-mode",
-  "libcurl",
-  "raw",
-  "no-raw",
-  "post301",
-  "no-post301",
-  "keepalive",
-  "no-keepalive",
-  "socks5-hostname",
-  "keepalive-time",
-  "post302",
-  "no-post302",
-  "noproxy",
-  "socks5-gssapi-nec",
-  "no-socks5-gssapi-nec",
-  "proxy1.0",
-  "tftp-blksize",
-  "mail-from",
-  "mail-rcpt",
-  "ftp-pret",
-  "no-ftp-pret",
-  "proto",
-  "proto-redir",
-  "resolve",
-  "delegation",
-  "mail-auth",
-  "post303",
-  "no-post303",
-  "metalink",
-  "no-metalink",
-  "sasl-authzid",
-  "sasl-ir",
-  "no-sasl-ir",
-  "test-event",
-  "no-test-event",
-  "unix-socket",
-  "path-as-is",
-  "no-path-as-is",
-  "socks5-gssapi-service",
-  "proxy-service-name",
-  "service-name",
-  "proto-default",
-  "expect100-timeout",
-  "tftp-no-options",
-  "no-tftp-no-options",
-  "connect-to",
-  "abstract-unix-socket",
-  "tls-max",
-  "suppress-connect-headers",
-  "no-suppress-connect-headers",
-  "compressed-ssh",
-  "no-compressed-ssh",
-  "happy-eyeballs-timeout-ms",
-  "retry-all-errors",
-  "no-retry-all-errors",
-  "tlsv1",
-  "tlsv1.0",
-  "tlsv1.1",
-  "tlsv1.2",
-  "tlsv1.3",
-  "tls13-ciphers",
-  "proxy-tls13-ciphers",
-  "sslv2",
-  "sslv3",
-  "ipv4",
-  "ipv6",
-  "append",
-  "no-append",
-  "alt-svc",
-  "hsts",
-  "use-ascii",
-  "no-use-ascii",
-  "cookie-jar",
-  "continue-at",
-  "dump-header",
-  "cert-type",
-  "key-type",
-  "pass",
-  "engine",
-  "pubkey",
-  "hostpubmd5",
-  "hostpubsha256",
-  "crlfile",
-  "tlsuser",
-  "tlspassword",
-  "tlsauthtype",
-  "ssl-allow-beast",
-  "no-ssl-allow-beast",
-  "ssl-auto-client-cert",
-  "no-ssl-auto-client-cert",
-  "proxy-ssl-auto-client-cert",
-  "no-proxy-ssl-auto-client-cert",
-  "pinnedpubkey",
-  "proxy-pinnedpubkey",
-  "cert-status",
-  "no-cert-status",
-  "doh-cert-status",
-  "no-doh-cert-status",
-  "false-start",
-  "no-false-start",
-  "ssl-no-revoke",
-  "no-ssl-no-revoke",
-  "ssl-revoke-best-effort",
-  "no-ssl-revoke-best-effort",
-  "tcp-fastopen",
-  "no-tcp-fastopen",
-  "proxy-tlsuser",
-  "proxy-tlspassword",
-  "proxy-tlsauthtype",
-  "proxy-cert",
-  "proxy-cert-type",
-  "proxy-key",
-  "proxy-key-type",
-  "proxy-pass",
-  "proxy-ciphers",
-  "proxy-crlfile",
-  "proxy-ssl-allow-beast",
-  "no-proxy-ssl-allow-beast",
-  "login-options",
-  "proxy-cacert",
-  "proxy-capath",
-  "proxy-insecure",
-  "no-proxy-insecure",
-  "proxy-tlsv1",
-  "socks5-basic",
-  "no-socks5-basic",
-  "socks5-gssapi",
-  "no-socks5-gssapi",
-  "etag-save",
-  "etag-compare",
-  "curves",
-  "fail",
-  "no-fail",
-  "fail-early",
-  "no-fail-early",
-  "styled-output",
-  "no-styled-output",
-  "mail-rcpt-allowfails",
-  "no-mail-rcpt-allowfails",
-  "fail-with-body",
-  "no-fail-with-body",
-  "globoff",
-  "no-globoff",
-  "request-target",
-  "proxy-header",
-  "include",
-  "no-include",
-  "junk-session-cookies",
-  "no-junk-session-cookies",
-  "remote-header-name",
-  "no-remote-header-name",
-  "doh-insecure",
-  "no-doh-insecure",
-  "config",
-  "list-only",
-  "no-list-only",
-  "location",
-  "no-location",
-  "location-trusted",
-  "no-location-trusted",
-  "max-time",
-  "manual",
-  "no-manual",
-  "netrc",
-  "no-netrc",
-  "netrc-optional",
-  "no-netrc-optional",
-  "netrc-file",
-  "buffer",
-  "no-buffer",
-  "remote-name",
-  "remote-name-all",
-  "no-remote-name-all",
-  "output-dir",
-  "proxytunnel",
-  "no-proxytunnel",
-  "ftp-port",
-  "disable",
-  "no-disable",
-  "quote",
-  "range",
-  "remote-time",
-  "no-remote-time",
-  "telnet-option",
-  "write-out",
-  "preproxy",
-  "speed-limit",
-  "speed-time",
-  "time-cond",
-  "parallel",
-  "no-parallel",
-  "parallel-max",
-  "parallel-immediate",
-  "no-parallel-immediate",
-  "next",
-];
 
 // https://peps.python.org/pep-3138/
 // https://www.unicode.org/reports/tr44/#GC_Values_Table
@@ -496,13 +192,16 @@ export function reprStrBinary(s: string): string {
   return sEsc + ".encode()";
 }
 
-type OSVars = { [key: string]: string };
+export type OSVars = { [key: string]: string };
 export function repr(
   word: Word,
   osVars: OSVars,
   imports: Set<string>,
   binary = false,
-  errorOk = false // so we do open(None) and error instead of open('') if we don't have the env var
+  // os.getenv('MYVAR') returns None if MYVAR is not set
+  // os.getenv('MYVAR', '') returns '' if MYVAR is not set but it's a bit more verbose,
+  // so setting errorOk to true will use the shorter version
+  errorOk = false
 ): string {
   const reprFn = binary ? reprStrBinary : reprStr;
   const reprs = [];
@@ -557,6 +256,30 @@ export function repr(
 
 function reprb(word: Word, osVars: OSVars, imports: Set<string>): string {
   return repr(word, osVars, imports, true);
+}
+
+export function asFloat(
+  word: Word,
+  osVars: OSVars,
+  imports: Set<string>
+): string {
+  if (word.isString()) {
+    // TODO: check it's actually a valid float
+    return word.toString();
+  }
+  return "float(" + repr(word, osVars, imports, false, true) + ")";
+}
+
+export function asInt(
+  word: Word,
+  osVars: OSVars,
+  imports: Set<string>
+): string {
+  if (word.isString()) {
+    // TODO: check it's actually a valid int
+    return word.toString();
+  }
+  return "int(" + repr(word, osVars, imports, false, true) + ")";
 }
 
 // Port of Python's json.dumps() with its default options, which is what Requests uses
@@ -771,6 +494,40 @@ function objToPython(
         "unexpected object type that shouldn't appear in JSON: " + typeof obj
       );
   }
+}
+
+export function formatHeaders(
+  headers: Headers,
+  commentedOutHeaders: { [key: string]: string },
+  osVars: OSVars,
+  imports: Set<string>
+): string {
+  // TODO: what if there are repeat headers
+  let headerDict = "headers = {\n";
+  for (const [headerName, headerValue] of headers) {
+    if (headerValue === null) {
+      continue;
+    }
+
+    let lineStart;
+    const headerNameLower = headerName.toLowerCase().toString();
+    if (has(commentedOutHeaders, headerNameLower)) {
+      if (commentedOutHeaders[headerNameLower]) {
+        headerDict += "    # " + commentedOutHeaders[headerNameLower] + "\n";
+      }
+      lineStart = "    # ";
+    } else {
+      lineStart = "    ";
+    }
+    headerDict +=
+      lineStart +
+      repr(headerName, osVars, imports) +
+      ": " +
+      repr(headerValue, osVars, imports) +
+      ",\n";
+  }
+  headerDict += "}\n";
+  return headerDict;
 }
 
 function decodePercentEncoding(s: Word): Word | null {
@@ -1129,7 +886,7 @@ function formatDataAsStr(
   return [lines.join("\n") + "\n", encode];
 }
 
-function formatDataAsJson(
+export function formatDataAsJson(
   d: DataParam,
   imports: Set<string>,
   osVars: OSVars
@@ -1147,7 +904,6 @@ function formatDataAsJson(
     try {
       // TODO: types
       // https://github.com/josdejong/lossless-json/issues/245
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       dataAsJson = jsonParseLossless(d.toString()) as any;
     } catch {
       try {
@@ -1276,21 +1032,18 @@ function getFilesString(
     // https://github.com/psf/requests/blob/2d5517682b3b38547634d153cea43d48fbc8cdb5/requests/models.py#L117
     //
     // Requests's multipart syntax looks like this:
-    // (name/filename, content)
-    // (name, open(filename/contentFile))
-    // (name, (filename, open(contentFile))
-    // (name, (filename, open(contentFile), contentType, headers)) // this isn't parsed from --form yet
+    // name/filename: content
+    // name: open(filename/contentFile)
+    // name: (filename, open(contentFile))
+    // name: (filename, open(contentFile), contentType, headers))
     const name = m.name ? repr(m.name, osVars, imports) : "None";
-    const sentFilename =
-      "filename" in m && m.filename
-        ? repr(m.filename, osVars, imports)
-        : "None";
-    if ("contentFile" in m) {
-      if (eq(m.contentFile, "-")) {
-        // TODO: use piped stdin if we have it
-        usesStdin = true;
-        return [name, "(" + sentFilename + ", sys.stdin.buffer.read())"];
-      } else if (eq(m.contentFile, m.filename)) {
+
+    if (!("contentType" in m) && !("headers" in m) && !("encoder" in m)) {
+      if (
+        "contentFile" in m &&
+        eq(m.contentFile, m.filename) &&
+        !eq(m.contentFile, "-")
+      ) {
         return [
           name,
           "open(" +
@@ -1298,19 +1051,38 @@ function getFilesString(
             ", 'rb')",
         ];
       }
-      return [
-        name,
-        "(" +
-          sentFilename +
-          ", open(" +
-          repr(m.contentFile, osVars, imports, false, true) +
-          ", 'rb'))",
-      ];
+      if ("content" in m && "filename" in m && eq(m.name, m.filename)) {
+        return [name, repr(m.content, osVars, imports)];
+      }
     }
-    return [
-      name,
-      "(" + sentFilename + ", " + repr(m.content, osVars, imports) + ")",
-    ];
+
+    const sentFilename =
+      "filename" in m && m.filename
+        ? repr(m.filename, osVars, imports)
+        : "None";
+    const tuple = [sentFilename];
+    if ("contentFile" in m) {
+      if (eq(m.contentFile, "-")) {
+        // TODO: use piped stdin if we have it
+        usesStdin = true;
+        tuple.push("sys.stdin.buffer.read())");
+      } else {
+        tuple.push(
+          "open(" +
+            repr(m.contentFile, osVars, imports, false, true) +
+            ", 'rb')"
+        );
+      }
+    } else {
+      tuple.push(repr(m.content, osVars, imports));
+    }
+    if ("contentType" in m && m.contentType) {
+      tuple.push(repr(m.contentType, osVars, imports));
+    }
+    if ("headers" in m && m.headers) {
+      // TODO
+    }
+    return [name, "(" + tuple.join(", ") + ")"];
   });
 
   const multipartUploadsAsDict = Object.fromEntries(multipartUploads);
@@ -1601,31 +1373,12 @@ function requestToPython(
 
   let headerDict;
   if (request.headers.length) {
-    // TODO: what if there are repeat headers
-    headerDict = "headers = {\n";
-    for (const [headerName, headerValue] of request.headers) {
-      if (headerValue === null) {
-        continue;
-      }
-
-      let lineStart;
-      const headerNameLower = headerName.toLowerCase().toString();
-      if (has(commentedOutHeaders, headerNameLower)) {
-        if (commentedOutHeaders[headerNameLower]) {
-          headerDict += "    # " + commentedOutHeaders[headerNameLower] + "\n";
-        }
-        lineStart = "    # ";
-      } else {
-        lineStart = "    ";
-      }
-      headerDict +=
-        lineStart +
-        repr(headerName, osVars, imports) +
-        ": " +
-        repr(headerValue, osVars, imports) +
-        ",\n";
-    }
-    headerDict += "}\n";
+    headerDict = formatHeaders(
+      request.headers,
+      commentedOutHeaders,
+      osVars,
+      imports
+    );
   }
 
   let pythonCode = "";
@@ -1662,11 +1415,7 @@ function requestToPython(
   let followRedirects = request.followRedirects;
   let maxRedirects = undefined;
   if (request.maxRedirects !== undefined) {
-    if (request.maxRedirects.isString()) {
-      maxRedirects = request.maxRedirects.toString();
-    } else {
-      maxRedirects = "int(" + repr(request.maxRedirects, osVars, imports) + ")";
-    }
+    maxRedirects = asInt(request.maxRedirects, osVars, imports);
   }
   if (followRedirects === undefined) {
     followRedirects = true;
@@ -1894,14 +1643,7 @@ function requestToPython(
     if (request.timeout || request.connectTimeout) {
       let connectTimeout = null;
       if (request.connectTimeout) {
-        if (request.connectTimeout.isString()) {
-          connectTimeout = request.connectTimeout.toString();
-        } else {
-          connectTimeout =
-            "float(" +
-            repr(request.connectTimeout, osVars, imports, false, true) +
-            ")";
-        }
+        connectTimeout = asFloat(request.connectTimeout, osVars, imports);
       }
       let timeout = null;
       if (request.timeout) {
@@ -2073,7 +1815,7 @@ function requestToPython(
   return variableCode + pythonCode;
 }
 
-function printImports(imps: Set<string>): string {
+export function printImports(imps: Set<string>): string {
   let s = "";
   for (const imp of Array.from(imps).sort()) {
     if (imp.includes(".")) {
